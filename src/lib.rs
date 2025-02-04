@@ -1,11 +1,42 @@
 use chrono::{TimeZone, Utc};
-use ctxutils::io::{rdu16le, rdu32le, rdu64le, rdu8};
 use serde::Serialize;
 use std::cmp::min;
 use std::io::{Read, Seek, SeekFrom};
 
 const DOS_HEADER_SIGNATURE: &[u8] = b"MZ";
 const PE_FILE_SIGNATURE: &[u8] = b"PE\x00\x00";
+
+/// Single byte `u8` reader
+#[inline]
+pub fn rdu8<R: Read>(r: &mut R) -> Result<u8, std::io::Error> {
+    let mut buf = [0u8; 1];
+    r.read_exact(&mut buf)?;
+    Ok(buf[0])
+}
+
+/// Little endian `u16` reader
+#[inline]
+pub fn rdu16le<R: Read>(r: &mut R) -> Result<u16, std::io::Error> {
+    let mut buf = [0u8; 2];
+    r.read_exact(&mut buf)?;
+    Ok(u16::from_le_bytes(buf))
+}
+
+/// Little endian `u32` reader
+#[inline]
+pub fn rdu32le<R: Read>(r: &mut R) -> Result<u32, std::io::Error> {
+    let mut buf = [0u8; 4];
+    r.read_exact(&mut buf)?;
+    Ok(u32::from_le_bytes(buf))
+}
+
+/// Little endian `u64` reader
+#[inline]
+pub fn rdu64le<R: Read>(r: &mut R) -> Result<u64, std::io::Error> {
+    let mut buf = [0u8; 8];
+    r.read_exact(&mut buf)?;
+    Ok(u64::from_le_bytes(buf))
+}
 
 #[allow(non_snake_case)]
 #[derive(Serialize)]
